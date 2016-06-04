@@ -1,7 +1,7 @@
 {
   "name": "vscode-toggleproxy",
-  "displayName": "vscode-toggleproxy",
-  "description": "",
+  "displayName": "Toggle Proxy",
+  "description": "To `enable` or `disable` the `"http.proxy":` in settings.json.",
   "version": "0.0.2",
   "publisher": "satokaz",
   "engines": {
@@ -10,6 +10,15 @@
   "categories": [
     "Other"
   ],
+  "icon": "images/octicon-globe_128_128_7c05c9_none.png",
+  "homepage": "https://github.com/satokaz/vscode-toggleProxy/blob/master/README.md",
+  "repository": {
+		"type": "git",
+		"url": "https://github.com/satokaz/vscode-toggleProxy.git"
+	},
+	"bugs": {
+		"url": "https://github.com/satokaz/vscode-toggleProxy/issues"
+	},
   "activationEvents": [
     "*"
   ],
