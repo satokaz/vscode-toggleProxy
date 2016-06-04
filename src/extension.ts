@@ -1,4 +1,3 @@
-
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -12,13 +11,10 @@ let settingsPath = getSettingsPath();
 // controlled by the activation events defined in package.json
 export function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations, your extension "toggleProxy" is now active!');
-    // StatusBar にアイコンとステータスを表示する
-    // function activate() の中に書くと、Status Bar に出力される 
     var statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
     statusBarItem.tooltip = 'http_proxy: ' + isProxyEnabled;
     statusBarItem.command = 'extension.toggleProxy';
     statusBarItem.color = '#FFFFFF';
-
     //
     // Workaround in order to refresh the all-window StatusBarItem.text? 
     //
@@ -37,23 +33,20 @@ export function activate(context: vscode.ExtensionContext) {
         for (i in array) {
             if (array[i].match(/\/\/\W/) && array[i].match(/.*"http(s)?.proxy".*/)) {
                 array[i] = array[i].replace(/\/\/\W/, "");
-                vscode.window.setStatusBarMessage('enabled the http_proxy', 2000);
+                vscode.window.setStatusBarMessage('Enabled http.proxy', 2000);
                 statusBarItem.text = (`$(globe) on`);
                 count++;
                 vscode.Disposable.from(disposableProvider).dispose();
             } else if (array[i].match(/.*"http(s)?.proxy".*/)) {
                 array[i] = array[i].replace(/^/, "// ");
-                vscode.window.setStatusBarMessage('disabled the http_proxy', 2000);
+                vscode.window.setStatusBarMessage('Disabled http.proxy', 2000);
                 statusBarItem.text = (`$(globe) off`);
                 vscode.Disposable.from(disposableProvider).dispose();
             }
-            // console.log(array[i]);
         }
-        console.log(array.toString);
         fs.writeFileSync(settingsTmpFile, array.join('\n'), 'utf8');
         fs.createReadStream(settingsTmpFile).pipe(fs.createWriteStream(settingsPath));
         fs.unlink(settingsTmpFile);
-        console.log("count:", count);
     });
     context.subscriptions.push(disposableCommand);
 }
@@ -63,31 +56,19 @@ module.exports.activate = activate;
 // Check http_proxy setting
 //
 function getHttpProxy() {
-    var i;
+    var j;
     var array = fs.readFileSync(settingsPath, 'utf8').toString().split("\n");
-    for (i in array) {
-        if (array[i].match(/\/\/\W/) && array[i].match(/.*"http(s)?.proxy".*/)) {
-            console.log("getHttpProxy: http_proxy が無効みたい: ", array[i]);
+    for (j in array) {
+        if (array[j].match(/\/\/\W/) && array[j].match(/.*"http(s)?.proxy".*/)) {
+            // console.log("getHttpProxy: disabled the http.proxy: ", array[j]);
             isProxyEnabled = ' off';
-        } else if (array[i].match(/.*"http(s)?.proxy".*/)) {
-            console.log("getHttpProxy: http_proxy が有効みたい: ", array[i]);
+        } else if (array[j].match(/.*"http(s)?.proxy".*/)) {
+            // console.log("getHttpProxy: enabled the http.proxy: ", array[j]);
             isProxyEnabled = ' on';
         }
     }
     return isProxyEnabled;
 }
-
-
-    // let projectFile: string;
-    // let appdata = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : '/var/local');
-    // projectFile = path.join(appdata, "Code/User/projects.json");
-    
-    // // in linux, it may not work with /var/local, then try to use /home/myuser/.config
-    // if ((process.platform == 'linux') && (!fs.existsSync(projectFile))) {
-    //     let os = require('os');
-    //     projectFile = path.join(os.homedir(), '.config/Code/User/projects.json');
-    // }
-
 
 //
 // get the PATH of settings.json (check Stable or Insiders build?) 
@@ -96,9 +77,8 @@ function getSettingsPath() {
     let settingsFile;
     let settingsData;
     // var settingsData = process.env.HOME + '/Library/Application Support';
-    settingsData = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : '/var/local');
-
-    if ((process.execPath).match(/nsiders/)) {
+    settingsData = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support': '/var/local' );
+    if ((process.execPath).match(/insiders/ig)) {
         settingsFile = path.join(settingsData, "Code\ -\ Insiders/User/settings.json");
     } else {
         settingsFile = path.join(settingsData, "Code/User/settings.json");
@@ -108,13 +88,11 @@ function getSettingsPath() {
     if (process.platform == 'linux') {
         let os = require('os');
         settingsData = path.join(os.homedir(), '.config/');
-        if ((process.execPath).match(/insiders/)) {
+        if ((process.execPath).match(/insiders/ig)) {
             settingsFile = path.join(settingsData, "Code\ -\ Insiders/User/settings.json");
         } else {
             settingsFile = path.join(settingsData, "Code/User/settings.json");
         } 
     }
-    console.log('settingsData = ', settingsData);     
-    console.log('settingsFile = ', settingsFile);
     return settingsFile;
 }
