@@ -1,7 +1,7 @@
 {
   "name": "vscode-toggleproxy",
   "displayName": "Toggle Proxy",
-  "description": "To `enable` or `disable` the `"http.proxy":` in settings.json.",
+  "description": "To enable or disable the http.proxy: in settings.json.",
   "version": "0.0.2",
   "publisher": "satokaz",
   "engines": {
