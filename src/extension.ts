@@ -77,21 +77,6 @@ function getHttpProxy() {
     return isProxyEnabled;
 }
 
-//
-// get the PATH of settings.json (check Stable or Insiders build?) 
-//
-function getSettingsPath() {
-    let settingsFile;
-    // var settingsData = process.env.HOME + '/Library/Application Support';
-    let settingsData = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : '/var/local');
-    
-    if ((process.execPath).match(/Insiders/)) {
-        settingsFile = path.join(settingsData, "Code - Insiders/User/settings.json");
-    } else {
-        settingsFile = path.join(settingsData, "Code/User/settings.json");
-    }
-    return settingsFile;
-}
 
     // let projectFile: string;
     // let appdata = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : '/var/local');
@@ -102,3 +87,34 @@ function getSettingsPath() {
     //     let os = require('os');
     //     projectFile = path.join(os.homedir(), '.config/Code/User/projects.json');
     // }
+
+
+//
+// get the PATH of settings.json (check Stable or Insiders build?) 
+//
+function getSettingsPath() {
+    let settingsFile;
+    let settingsData;
+    // var settingsData = process.env.HOME + '/Library/Application Support';
+    settingsData = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : '/var/local');
+
+    if ((process.execPath).match(/nsiders/)) {
+        settingsFile = path.join(settingsData, "Code\ -\ Insiders/User/settings.json");
+    } else {
+        settingsFile = path.join(settingsData, "Code/User/settings.json");
+    }
+
+    // Workaround for Linux
+    if (process.platform == 'linux') {
+        let os = require('os');
+        settingsData = path.join(os.homedir(), '.config/');
+        if ((process.execPath).match(/insiders/)) {
+            settingsFile = path.join(settingsData, "Code\ -\ Insiders/User/settings.json");
+        } else {
+            settingsFile = path.join(settingsData, "Code/User/settings.json");
+        } 
+    }
+    console.log('settingsData = ', settingsData);     
+    console.log('settingsFile = ', settingsFile);
+    return settingsFile;
+}
