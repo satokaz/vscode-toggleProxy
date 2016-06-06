@@ -8,7 +8,7 @@ To `enable` or `disable` the `"http.proxy":` in settings.json.
 
 ## Installation
 
-Press F1 in VSCode, type `ext install` and then look for `proxy`.
+* Press F1 in VSCode, type `ext install` and then look for `proxy`.
 
 ## Usage
 
