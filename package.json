@@ -29,7 +29,21 @@
                 "command": "extension.toggleProxy",
                 "title": "Proxy : Toggle"
             }
-        ]
+        ],
+    	"menus": {
+			"editor/context": [
+				{
+					"command": "extension.toggleProxy",
+					"group": "navigator"
+				}
+			],
+			"editor/title": [
+				{
+					"command": "extension.toggleProxy",
+					"group": "navigator"
+				}
+			]
+		}
     },
     "scripts": {
         "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
