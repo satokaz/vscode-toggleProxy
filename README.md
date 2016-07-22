@@ -15,6 +15,13 @@ To `enable` or `disable` the `"http.proxy":` in settings.json.
 * Click the globe icon on the status bar. To toggle the setting.
 * Available commands: `Proxy : Toggle`
 
+## Changelog
+
+* 2016/07/22 Add Context Menu
+
+    ![alt](images/proxy_context.gif)
+
+
 ## Notes
 
 Please make a backup of settings.json.
