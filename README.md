@@ -17,7 +17,11 @@ To `enable` or `disable` the `"http.proxy":` in settings.json.
 
 ## Changelog
 
-* 2016/07/22 Add Context Menu
+* 2016/07/26 
+  * Wrong environment variables in Windows platform
+
+* 2016/07/22 
+  * Add Context Menu
 
     ![alt](images/proxy_context.gif)
 
@@ -26,7 +30,7 @@ To `enable` or `disable` the `"http.proxy":` in settings.json.
 
 Please make a backup of settings.json.
 
-* Windows:
+* Windows: `%APPDATA%\Code\User\settings.json` or `%APPDATA%\Roaming\Code - Insiders\User\settings.json`
 * Mac: `$HOME/Library/Application Support/Code/User/settings.json` or `$HOME/Library/Application Support/Code - Insiders/User/settings.json`
 * Linux: `$HOME/.config/Code/User/settings.json` or `$HOME/.config/Code - Insiders/User/settings.json`
 
