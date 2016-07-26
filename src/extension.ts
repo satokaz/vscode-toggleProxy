@@ -26,7 +26,10 @@ export function activate(context: vscode.ExtensionContext) {
     statusBarItem.show();
 
     let disposableCommand = vscode.commands.registerCommand('extension.toggleProxy', (context) => {
-        var settingsTmpFile = process.env.TMPDIR + path.basename(settingsPath + '.' + process.env.USER + '.tmp.' + Math.random());
+        var settingsTmpDir = (process.platform == 'win32' ? process.env.TMP: process.env.TMPDIR);
+        var settingsTmpFile = path.join(settingsTmpDir, path.basename(settingsPath + '.tmp.' + Math.random()));
+        // console.log(settingsTmpDir);
+        // console.log(settingsTmpFile);
         var i;
         var count = 0;
         var array = fs.readFileSync(settingsPath, 'utf8').toString().split("\n");
