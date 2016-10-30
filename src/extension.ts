@@ -3,74 +3,125 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 var statusBarItem;
-var isProxyEnabled;
-var disposableProvider;
+var disposableCommand;
 let settingsPath = getSettingsPath();
+
+interface IHTTP_ProxyConf {
+    http_proxyEnabled: boolean,
+    http_proxyEnabledString: string,
+    http_proxy: string
+}
 
 // this method is called when your extension is activated. activation is
 // controlled by the activation events defined in package.json
 export function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations, your extension "toggleProxy" is now active!');
-    var statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
-    statusBarItem.tooltip = 'http_proxy: ' + isProxyEnabled;
+    statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
     statusBarItem.command = 'extension.toggleProxy';
     statusBarItem.color = '#FFFFFF';
-    //
-    // Workaround in order to refresh the all-window StatusBarItem.text? 
-    //
-    function statusBarUpdate() {
-        statusBarItem.text = `$(globe)` + getHttpProxy();
-        setTimeout(statusBarUpdate, 10000);
-    };
+
     statusBarUpdate();
     statusBarItem.show();
-
-    let disposableCommand = vscode.commands.registerCommand('extension.toggleProxy', (context) => {
-        var settingsTmpDir = (process.platform == 'win32' ? process.env.TMP: process.env.TMPDIR);
-        var settingsTmpFile = path.join(settingsTmpDir, path.basename(settingsPath + '.tmp.' + Math.random()));
-        // console.log(settingsTmpDir);
-        // console.log(settingsTmpFile);
-        var i;
-        var count = 0;
-        var array = fs.readFileSync(settingsPath, 'utf8').toString().split("\n");
-        for (i in array) {
-            if (array[i].match(/\/\/\W/) && array[i].match(/.*"http(s)?.proxy".*/)) {
-                array[i] = array[i].replace(/\/\/\W/, "");
-                vscode.window.setStatusBarMessage('Enabled http.proxy', 2000);
-                statusBarItem.text = (`$(globe) on`);
-                count++;
-                vscode.Disposable.from(disposableProvider).dispose();
-            } else if (array[i].match(/.*"http(s)?.proxy".*/)) {
-                array[i] = array[i].replace(/^/, "// ");
-                vscode.window.setStatusBarMessage('Disabled http.proxy', 2000);
-                statusBarItem.text = (`$(globe) off`);
-                vscode.Disposable.from(disposableProvider).dispose();
-            }
-        }
-        fs.writeFileSync(settingsTmpFile, array.join('\n'), 'utf8');
-        fs.createReadStream(settingsTmpFile).pipe(fs.createWriteStream(settingsPath));
-        fs.unlink(settingsTmpFile);
-    });
+    fs.watch(settingsPath, settingsFileChanged); // statusBar will be updated any time a change happen in the file
+    disposableCommand = vscode.commands.registerCommand('extension.toggleProxy', toggleProxy);
     context.subscriptions.push(disposableCommand);
 }
 module.exports.activate = activate;
 
+function toggleProxy(context) {
+    let settingsTmpDir = (process.platform == 'win32' ? process.env.TMP : process.env.TMPDIR);
+    let settingsTmpFile = path.join(settingsTmpDir, path.basename(settingsPath + '.tmp.' + Math.random()));
+    // console.log(settingsTmpDir);
+    // console.log(settingsTmpFile);
+    let line: string;
+    let array = fs.readFileSync(settingsPath, 'utf8').toString().split("\n");
+    for (line in array) {
+        const matchResult = regExpMatchHttpProxy(array[line]);
+
+        if (matchResult !== null) {
+            if (!matchResult.http_proxyEnabled) {
+                // should enable proxy
+                array[line] = array[line].replace(/\/\/\W/, "");
+                vscode.window.setStatusBarMessage('Enabled http.proxy', 2000);
+            } else {
+                // should disable proxy
+                array[line] = array[line].replace(/^/, "// ");
+                vscode.window.setStatusBarMessage('Disabled http.proxy', 2000);
+            }
+        }
+    }
+    fs.writeFileSync(settingsTmpFile, array.join('\n'), 'utf8');
+
+    // copy tmp settings file to vscode settings
+    fs.createReadStream(settingsTmpFile).pipe(fs.createWriteStream(settingsPath));
+    fs.unlink(settingsTmpFile);
+}
+
+//
+// Update UI when settings files is changed 
+//
+function settingsFileChanged(event: string, fileName: string) {
+    statusBarUpdate();
+}
+
+//
+// Refresh StatusBarItem 
+//
+function statusBarUpdate() {
+    const httpProxy: IHTTP_ProxyConf = getHttpProxy();
+    if (httpProxy) {
+        statusBarItem.text = `$(globe)` + httpProxy.http_proxyEnabledString;
+        statusBarItem.tooltip = httpProxy.http_proxy;
+    }
+};
+
 //
 // Check http_proxy setting
 //
-function getHttpProxy() {
-    var j;
-    var array = fs.readFileSync(settingsPath, 'utf8').toString().split("\n");
-    for (j in array) {
-        if (array[j].match(/\/\/\W/) && array[j].match(/.*"http(s)?.proxy".*/)) {
-            // console.log("getHttpProxy: disabled the http.proxy: ", array[j]);
-            isProxyEnabled = ' off';
-        } else if (array[j].match(/.*"http(s)?.proxy".*/)) {
-            // console.log("getHttpProxy: enabled the http.proxy: ", array[j]);
-            isProxyEnabled = ' on';
+function getHttpProxy(): IHTTP_ProxyConf {
+    let line: string;
+    let array = fs.readFileSync(settingsPath, 'utf8').toString().split("\n");
+    let result: IHTTP_ProxyConf = null;
+
+    for (line in array) {
+        const matchResult = regExpMatchHttpProxy(array[line]);
+
+        if (matchResult !== null) {
+            result = matchResult;
+            break;
         }
     }
-    return isProxyEnabled;
+    return result;
+}
+
+//
+// apply regExp to found the http_proxy config in settings file
+// 
+// matchResult[1]: // or nothing => comment
+// matchResult[2]: https or http
+// matchResult[3]: contains the proxy adress
+function regExpMatchHttpProxy(line: string): IHTTP_ProxyConf {
+    let result: IHTTP_ProxyConf = {
+        http_proxy: "",
+        http_proxyEnabled: false,
+        http_proxyEnabledString: ""
+    }
+    const matchResult = line.match(/(\/\/||\s).*"(http||https).proxy".*:.*"(.*)"/);
+
+    if (matchResult !== null) {
+        // is the Proxy on?
+        result.http_proxyEnabled = (matchResult[1] === "");
+
+        // proxyEnabledString
+        result.http_proxyEnabledString = result.http_proxyEnabled ? " On" : " Off"
+
+        // http_proxy value configured
+        result.http_proxy = matchResult[3];
+    }
+    else {
+        result = null;
+    }
+    return result;
 }
 
 //
@@ -80,7 +131,7 @@ function getSettingsPath() {
     let settingsFile;
     let settingsData;
     // var settingsData = process.env.HOME + '/Library/Application Support';
-    settingsData = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support': '/var/local' );
+    settingsData = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : '/var/local');
     if ((process.execPath).match(/insiders/ig)) {
         settingsFile = path.join(settingsData, "Code\ -\ Insiders/User/settings.json");
     } else {
@@ -95,7 +146,7 @@ function getSettingsPath() {
             settingsFile = path.join(settingsData, "Code\ -\ Insiders/User/settings.json");
         } else {
             settingsFile = path.join(settingsData, "Code/User/settings.json");
-        } 
+        }
     }
     return settingsFile;
 }

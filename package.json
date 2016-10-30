@@ -1,51 +1,51 @@
 {
-    "name": "vscode-toggleproxy",
-    "displayName": "Toggle Proxy",
-    "description": "To enable or disable the http.proxy: in settings.json.",
-    "version": "0.2.0",
-    "publisher": "satokaz",
-    "engines": {
-        "vscode": "^1.0.0"
-    },
-    "categories": [
-        "Other"
+  "name": "vscode-toggleproxy",
+  "displayName": "Toggle Proxy",
+  "description": "To enable or disable the http.proxy: in settings.json.",
+  "version": "0.2.1",
+  "publisher": "satokaz",
+  "engines": {
+    "vscode": "^1.0.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "icon": "images/octicon-globe_128_0_7c05c9_none.png",
+  "homepage": "https://github.com/satokaz/vscode-toggleProxy/blob/master/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/satokaz/vscode-toggleProxy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/satokaz/vscode-toggleProxy/issues"
+  },
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.toggleProxy",
+        "title": "Proxy : Toggle"
+      }
     ],
-    "icon": "images/octicon-globe_128_0_7c05c9_none.png",
-    "homepage": "https://github.com/satokaz/vscode-toggleProxy/blob/master/README.md",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/satokaz/vscode-toggleProxy.git"
-    },
-    "bugs": {
-        "url": "https://github.com/satokaz/vscode-toggleProxy/issues"
-    },
-    "activationEvents": [
-        "*"
-    ],
-    "main": "./out/src/extension",
-    "contributes": {
-        "commands": [
-            {
-                "command": "extension.toggleProxy",
-                "title": "Proxy : Toggle"
-            }
-        ],
-        "menus": {
-            "editor/context": [
-                {
-                    "command": "extension.toggleProxy",
-                    "group": "navigator"
-                }
-            ]
+    "menus": {
+      "editor/context": [
+        {
+          "command": "extension.toggleProxy",
+          "group": "navigator"
         }
-    },
-    "scripts": {
-        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
-    },
-    "devDependencies": {
-        "typescript": "^1.8.10",
-        "vscode": "^0.11.14"
+      ]
     }
+  },
+  "scripts": {
+    "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+    "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install"
+  },
+  "devDependencies": {
+    "typescript": "^1.8.10",
+    "vscode": "^0.11.14"
+  }
 }

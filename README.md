@@ -17,10 +17,13 @@ To `enable` or `disable` the `"http.proxy":` in settings.json.
 
 ## Changelog
 
-* 2016/07/26 
+* 0.2.1 - 2016/10/30
+    * Fix tooltips text 
+
+* 0.2.0 - 2016/07/26 
   * Wrong environment variables in Windows platform
 
-* 2016/07/22 
+* 0.1.0 - 2016/07/22 
   * Add Context Menu
 
     ![alt](images/proxy_context.gif)
