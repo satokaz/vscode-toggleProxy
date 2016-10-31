@@ -17,7 +17,7 @@ To `enable` or `disable` the `"http.proxy":` in settings.json.
 
 ## Changelog
 
-* 0.2.1 - 2016/10/30
+* 0.3.0 - 2016/10/30 (PR #1 - Thanks to @rlasjunies)
     * Fix tooltips text 
 
 * 0.2.0 - 2016/07/26 
