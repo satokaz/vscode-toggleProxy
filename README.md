@@ -14,29 +14,31 @@ To `enable` or `disable` the `"http.proxy":` in settings.json.
 
 * Click the globe icon on the status bar. To toggle the setting.
 * Available commands: `Proxy : Toggle`
+* Or context menu: `Proxy : Toggle`
+* Or Automatically switch (when Enabled)
 
-## Changelog
+## Automatically switch
 
-* 0.3.0 - 2016/10/30 (PR #1 - Thanks to @rlasjunies)
-    * Fix tooltips text 
+Added a monitor to the proxy server (set to `http.proxy`) by ping (Every 10 seconds) and automatically switch `http.proxy`.
 
-* 0.2.0 - 2016/07/26 
-  * Wrong environment variables in Windows platform
+Enable automatic switching (default: false) in `settings.json`:
 
-* 0.1.0 - 2016/07/22 
-  * Add Context Menu
+`"toggleproxy.autochange": true`
 
-    ![alt](images/proxy_context.gif)
-
+The setting will take effect after restarting vscode.
 
 ## Notes
 
 Please make a backup of settings.json.
 
-* Windows: `%APPDATA%\Code\User\settings.json` or `%APPDATA%\Roaming\Code - Insiders\User\settings.json`
-* Mac: `$HOME/Library/Application Support/Code/User/settings.json` or `$HOME/Library/Application Support/Code - Insiders/User/settings.json`
-* Linux: `$HOME/.config/Code/User/settings.json` or `$HOME/.config/Code - Insiders/User/settings.json`
+* **Windows**: `%APPDATA%\Code\User\settings.json` or `%APPDATA%\Roaming\Code - Insiders\User\settings.json`
+* **Mac**: `$HOME/Library/Application Support/Code/User/settings.json` or `$HOME/Library/Application Support/Code - Insiders/User/settings.json`
+* **Linux**: `$HOME/.config/Code/User/settings.json` or `$HOME/.config/Code - Insiders/User/settings.json`
 
-### For more information
+## License
+
+This extension is licensed under the MIT License.
+
+<!--### For more information-->
 
 **Enjoy!**

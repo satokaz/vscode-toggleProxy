@@ -2,7 +2,7 @@
   "name": "vscode-toggleproxy",
   "displayName": "Toggle Proxy",
   "description": "To enable or disable the http.proxy: in settings.json.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publisher": "satokaz",
   "engines": {
     "vscode": "^1.0.0"
@@ -37,6 +37,18 @@
           "group": "navigator"
         }
       ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "toggleProxy",
+      "order": 20,
+      "properties": {
+        "toggleproxy.autochange": {
+          "type": ["boolean"],
+          "default": false,
+          "description": "automatic switching function by ping"
+        }
+      }
     }
   },
   "scripts": {
@@ -47,5 +59,8 @@
   "devDependencies": {
     "typescript": "^1.8.10",
     "vscode": "^0.11.14"
+  },
+  "dependencies": {
+    "ping": "^0.2.1"
   }
 }

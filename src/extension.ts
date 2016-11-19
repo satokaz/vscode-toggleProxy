@@ -1,15 +1,18 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as url from 'url';
 
 var statusBarItem;
 var disposableCommand;
 let settingsPath = getSettingsPath();
+let repeat;
 
 interface IHTTP_ProxyConf {
     http_proxyEnabled: boolean,
     http_proxyEnabledString: string,
-    http_proxy: string
+    http_proxy: string,
+    http_proxyhost: string
 }
 
 // this method is called when your extension is activated. activation is
@@ -19,6 +22,37 @@ export function activate(context: vscode.ExtensionContext) {
     statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
     statusBarItem.command = 'extension.toggleProxy';
     statusBarItem.color = '#FFFFFF';
+
+    // Autocchange disable/enable requires restart
+    if (vscode.workspace.getConfiguration('toggleproxy')['autochange'] === true) {
+    //
+    // ping proxy 
+    //
+        function pingProxy() {
+            var ping = require('ping');
+            const httpProxy: IHTTP_ProxyConf = getHttpProxy();
+            ping.sys.probe(httpProxy.http_proxyhost, function(isAlive) {
+                if (isAlive) {  
+                    // proxy is alive
+                    console.log(httpProxy.http_proxyhost  + ' is alive.');
+                    if (httpProxy.http_proxyEnabled === false) {
+                        // Enable when http.proxy is disabled
+                        toggleProxy(context);
+                    }
+                } else { 
+                    // proxy is dead
+                    console.log(httpProxy.http_proxyhost + ' is dead.');
+                    if (httpProxy.http_proxyEnabled === true) {
+                        // Disable when http.proxy is Enabled
+                        toggleProxy(context);
+                    }
+                }
+            });
+            // console.log('http.proxy =', vscode.workspace.getConfiguration().get('http.proxy'));
+            repeat = setTimeout(pingProxy, 10000);
+        };
+        pingProxy();
+    } 
 
     statusBarUpdate();
     statusBarItem.show();
@@ -104,7 +138,8 @@ function regExpMatchHttpProxy(line: string): IHTTP_ProxyConf {
     let result: IHTTP_ProxyConf = {
         http_proxy: "",
         http_proxyEnabled: false,
-        http_proxyEnabledString: ""
+        http_proxyEnabledString: "",
+        http_proxyhost: ""
     }
     const matchResult = line.match(/(\/\/||\s).*"(http||https).proxy".*:.*"(.*)"/);
 
@@ -117,6 +152,9 @@ function regExpMatchHttpProxy(line: string): IHTTP_ProxyConf {
 
         // http_proxy value configured
         result.http_proxy = matchResult[3];
+
+        // Proxy hostname
+        result.http_proxyhost = url.parse(matchResult[3]).hostname;
     }
     else {
         result = null;
@@ -150,3 +188,4 @@ function getSettingsPath() {
     }
     return settingsFile;
 }
+
