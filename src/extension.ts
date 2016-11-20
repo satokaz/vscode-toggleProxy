@@ -2,16 +2,17 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
+import * as http from 'http';
 
 var statusBarItem;
 var disposableCommand;
 let settingsPath = getSettingsPath();
-let repeat;
 
 interface IHTTP_ProxyConf {
     http_proxyEnabled: boolean,
     http_proxyEnabledString: string,
     http_proxy: string,
+    http_port: string,
     http_proxyhost: string
 }
 
@@ -25,34 +26,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Autocchange disable/enable requires restart
     if (vscode.workspace.getConfiguration('toggleproxy')['autochange'] === true) {
-    //
-    // ping proxy 
-    //
-        function pingProxy() {
-            var ping = require('ping');
-            const httpProxy: IHTTP_ProxyConf = getHttpProxy();
-            ping.sys.probe(httpProxy.http_proxyhost, function(isAlive) {
-                if (isAlive) {  
-                    // proxy is alive
-                    console.log(httpProxy.http_proxyhost  + ' is alive.');
-                    if (httpProxy.http_proxyEnabled === false) {
-                        // Enable when http.proxy is disabled
-                        toggleProxy(context);
-                    }
-                } else { 
-                    // proxy is dead
-                    console.log(httpProxy.http_proxyhost + ' is dead.');
-                    if (httpProxy.http_proxyEnabled === true) {
-                        // Disable when http.proxy is Enabled
-                        toggleProxy(context);
-                    }
-                }
-            });
-            // console.log('http.proxy =', vscode.workspace.getConfiguration().get('http.proxy'));
-            repeat = setTimeout(pingProxy, 10000);
-        };
         pingProxy();
-    } 
+    }
 
     statusBarUpdate();
     statusBarItem.show();
@@ -62,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 module.exports.activate = activate;
 
-function toggleProxy(context) {
+function toggleProxy() {
     let settingsTmpDir = (process.platform == 'win32' ? process.env.TMP : process.env.TMPDIR);
     let settingsTmpFile = path.join(settingsTmpDir, path.basename(settingsPath + '.tmp.' + Math.random()));
     // console.log(settingsTmpDir);
@@ -137,6 +112,7 @@ function getHttpProxy(): IHTTP_ProxyConf {
 function regExpMatchHttpProxy(line: string): IHTTP_ProxyConf {
     let result: IHTTP_ProxyConf = {
         http_proxy: "",
+        http_port: "",
         http_proxyEnabled: false,
         http_proxyEnabledString: "",
         http_proxyhost: ""
@@ -152,6 +128,9 @@ function regExpMatchHttpProxy(line: string): IHTTP_ProxyConf {
 
         // http_proxy value configured
         result.http_proxy = matchResult[3];
+
+        // proxy port
+        result.http_port = url.parse(matchResult[3]).port;
 
         // Proxy hostname
         result.http_proxyhost = url.parse(matchResult[3]).hostname;
@@ -189,3 +168,29 @@ function getSettingsPath() {
     return settingsFile;
 }
 
+//
+// ping proxy 
+//
+function pingProxy() {
+    var ping = require('ping');
+    const httpProxy: IHTTP_ProxyConf = getHttpProxy();
+    ping.sys.probe(httpProxy.http_proxyhost, function(isAlive) {
+        if (isAlive) {  
+            // proxy is alive
+            console.log(httpProxy.http_proxyhost  + ' is alive.');
+            if (httpProxy.http_proxyEnabled === false) {
+                // Enable when http.proxy is disabled
+                toggleProxy();
+            }
+        } else { 
+            // proxy is dead
+            console.log(httpProxy.http_proxyhost + ' is dead.');
+            if (httpProxy.http_proxyEnabled === true) {
+                // Disable when http.proxy is Enabled
+                toggleProxy();
+            }
+        }
+    });
+    // console.log('http.proxy =', vscode.workspace.getConfiguration().get('http.proxy'));
+    setTimeout(pingProxy, 10000);
+};

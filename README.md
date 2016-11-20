@@ -27,6 +27,11 @@ Enable automatic switching (default: false) in `settings.json`:
 
 The setting will take effect after restarting vscode.
 
+## tips
+
+vscode-toggleproxy has effect only on VS Code. There is no effect on git/npmn/typings etc...
+When executing with terminal, set the `http_proxy` and `https_proxy` environment variable and execute the command.
+
 ## Notes
 
 Please make a backup of settings.json.
