@@ -1,5 +1,8 @@
 ﻿# Changelog
 
+* 0.4.1 - 2016/12/17
+  * Suppress debug output
+
 * 0.4.0 - 2016/11/18
   * Added automatic switching by ping
 

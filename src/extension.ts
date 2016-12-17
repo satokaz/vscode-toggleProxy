@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
-import * as http from 'http';
 
 var statusBarItem;
 var disposableCommand;
@@ -62,7 +61,10 @@ function toggleProxy() {
     fs.writeFileSync(settingsTmpFile, array.join('\n'), 'utf8');
 
     // copy tmp settings file to vscode settings
-    fs.createReadStream(settingsTmpFile).pipe(fs.createWriteStream(settingsPath));
+    // fs.createReadStream(settingsTmpFile).pipe(fs.createWriteStream(settingsPath));
+    // console.log("fs.writeFileSync(settingsPath, fs.readFileSync(settingsTmpFile,\"utf-8\"), 'utf8');")
+    fs.writeFileSync(settingsPath, fs.readFileSync(settingsTmpFile,"utf-8"), 'utf8');
+    // console.log("fs.unlink(settingsTmpFile);");
     fs.unlink(settingsTmpFile);
 }
 
@@ -177,14 +179,14 @@ function pingProxy() {
     ping.sys.probe(httpProxy.http_proxyhost, function(isAlive) {
         if (isAlive) {  
             // proxy is alive
-            console.log(httpProxy.http_proxyhost  + ' is alive.');
+            // console.log(httpProxy.http_proxyhost  + ' is alive.');
             if (httpProxy.http_proxyEnabled === false) {
                 // Enable when http.proxy is disabled
                 toggleProxy();
             }
         } else { 
             // proxy is dead
-            console.log(httpProxy.http_proxyhost + ' is dead.');
+            // console.log(httpProxy.http_proxyhost + ' is dead.');
             if (httpProxy.http_proxyEnabled === true) {
                 // Disable when http.proxy is Enabled
                 toggleProxy();
