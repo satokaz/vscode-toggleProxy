@@ -194,5 +194,5 @@ function pingProxy() {
         }
     });
     // console.log('http.proxy =', vscode.workspace.getConfiguration().get('http.proxy'));
-    setTimeout(pingProxy, 10000);
+    setTimeout(pingProxy, 15000);
 };

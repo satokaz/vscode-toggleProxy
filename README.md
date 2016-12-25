@@ -56,6 +56,10 @@ Please make a backup of settings.json.
 
 # Changelog
 
+* 0.4.2 - 2016/12/26
+  * Change file reading to synchronous read/write
+  * Change ping to 10 to 15 second interval
+
 * 0.4.1 - 2016/12/17
   * Suppress debug output
 
