@@ -19,7 +19,7 @@ To `enable` or `disable` the `"http.proxy":` in settings.json.
 
 ## Automatically switch
 
-Added a monitor to the proxy server (set to `http.proxy`) by ping (Every 10 seconds) and automatically switch `http.proxy`.
+Added a monitor to the proxy server (set to `http.proxy`) by ping (Every 15 seconds) and automatically switch `http.proxy`.
 
 Enable automatic switching (default: false) in `settings.json`:
 
