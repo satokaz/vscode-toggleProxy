@@ -19,7 +19,7 @@ To `enable` or `disable` the `"http.proxy":` in settings.json.
 
 ## Automatically switch
 
-Added a monitor to the proxy server (set to `http.proxy`) by ping (Every 10 seconds) and automatically switch `http.proxy`.
+Added a monitor to the proxy server (set to `http.proxy`) by ping (Every 15 seconds) and automatically switch `http.proxy`.
 
 Enable automatic switching (default: false) in `settings.json`:
 
@@ -55,6 +55,10 @@ Please make a backup of settings.json.
 * **Linux**: `$HOME/.config/Code/User/settings.json` or `$HOME/.config/Code - Insiders/User/settings.json`
 
 # Changelog
+
+* 0.4.2 - 2016/12/26
+  * Change file reading to synchronous read/write
+  * Change ping to 10 to 15 second interval
 
 * 0.4.1 - 2016/12/17
   * Suppress debug output
