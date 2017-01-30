@@ -1,5 +1,8 @@
 {
   "globalDevDependencies": {
     "typescript": "registry:dt/typescript#0.4.0+20160317120654"
+  },
+  "globalDependencies": {
+    "node-notifier": "registry:dt/node-notifier#0.0.0+20160510010627"
   }
 }

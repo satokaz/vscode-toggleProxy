@@ -7,3 +7,7 @@ src/**
 .gitignore
 tsconfig.json
 vsc-extension-quickstart.md
+images/**
+!images/octicon-globe_128_0_7c05c9_none.png
+settings.json.tmp
+extension.ts.bakcup
