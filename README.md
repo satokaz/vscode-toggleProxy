@@ -37,7 +37,7 @@ Add http_proxy toggle notification.
 
 If you want to disable it, set to `false`. (default: `true`)
 
-![](images/proxy_notifier_LICEcap.gif)
+![](https://raw.githubusercontent.com/satokaz/vscode-toggleProxy/master/images/proxy_notifier_LICEcap.gif)
 
 ## tips
 
