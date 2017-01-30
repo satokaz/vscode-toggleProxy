@@ -68,15 +68,17 @@ Please make a backup of settings.json.
 
 > Just in case, Make a copy of settings.json in `extensionPath`.
 >
-> ExtensionPath is an example: `$HOME/.vscode/extensions/satokaz.vscode-toggleproxy-$VERSION/`
+> ExtensionPath is an example: `$HOME/.vscode/extensions/satokaz.vscode-toggleproxy-$VERSION/settings.json.tmp`
 
 # Changelog
 
+* 0.4.4 - 2017/1/30
+  * Fixed being notified every time the `settings.json` file is rewritten
+
 * 0.4.3 - 2017/1/30
   * Add http_proxy toggle notification. 
-  * Make a copy of settings.json in `extensionPath`. (ExtensionPath is an example: `$HOME/.vscode/extensions/satokaz.vscode-toggleproxy-$VERSION/`)
+  * Make a copy of settings.json in `extensionPath`. (ExtensionPath is an example: `$HOME/.vscode/extensions/satokaz.vscode-toggleproxy-$VERSION/settings.json.tmp`)
 
-  
 * 0.4.2 - 2016/12/26
   * Change file reading to synchronous read/write
   * Change ping to 10 to 15 second interval

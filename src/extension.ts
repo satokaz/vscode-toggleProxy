@@ -3,7 +3,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
 import * as httpRequest from 'request-light';
-import toggleNotifier from './toggleNotifier';
+
+const notifier = require('node-notifier'); 
 
 var statusBarItem;
 var disposableCommand;
@@ -43,13 +44,14 @@ module.exports.activate = activate;
 
 function toggleProxy() {
     
+    const httpProxy: IHTTP_ProxyConf = getHttpProxy();
+
     let settingsTmpDir = (process.platform == 'win32' ? process.env.TMP : process.env.TMPDIR);
     let settingsTmpFile = path.join(settingsTmpDir, path.basename(settingsPath + '.tmp.' + Math.random()));
     // console.log(settingsTmpDir);
     // console.log(settingsTmpFile);
     let line: string;
     let array = fs.readFileSync(settingsPath, 'utf8').toString().split("\n");
-
 
     // Backup to extensionPath
     let backupTmpFile = path.join(vscode.extensions.getExtension("satokaz.vscode-toggleproxy").extensionPath, path.basename(settingsPath + '.tmp'));
@@ -79,14 +81,25 @@ function toggleProxy() {
     fs.writeFileSync(settingsPath, fs.readFileSync(settingsTmpFile,"utf-8"), 'utf8');
     // console.log("fs.unlink(settingsTmpFile);");
     fs.unlink(settingsTmpFile);
-    
+
+    // node-notifier
+    if (vscode.workspace.getConfiguration('toggleproxy')['notifier'] === true) {
+            notifier.notify({
+            'title': 'Visual Studio Code - Proxy Notification',
+            'message': !httpProxy.http_proxyEnabled ? 'Proxy Enabled: ' + httpProxy.http_proxy : 'Proxy Disabled',
+            'message2': 'test',
+            'icon': path.join(vscode.extensions.getExtension("satokaz.vscode-toggleproxy").extensionPath, path.join('images', 'octicon-globe_128_0_7c05c9_none.png')) ,
+            timeout: 5
+        });
+    }
+
     vscode.workspace.onDidChangeConfiguration(e => configureHttpRequest());
 
     return void 0;
 }
 
 //
-// Update UI when settings files is changed 
+// Update UI when settings files is changed
 //
 function settingsFileChanged(event: string, fileName: string) {
     statusBarUpdate();
@@ -100,12 +113,6 @@ function statusBarUpdate() {
     if (httpProxy) {
         statusBarItem.text = `$(globe)` + httpProxy.http_proxyEnabledString;
         statusBarItem.tooltip = httpProxy.http_proxy;
-
-        // node-notifier
-        if (vscode.workspace.getConfiguration('toggleproxy')['notifier'] === true) {
-        toggleNotifier(httpProxy);
-        // console.log('httpProxy.http_proxyEnabled =', httpProxy.http_proxyEnabled);
-        }
     }
 };
 
@@ -222,6 +229,5 @@ function pingProxy() {
 
 function configureHttpRequest() {
 	let httpSettings = vscode.workspace.getConfiguration('http');
-    // console.log("Enter configureHttpRequest.");
 	httpRequest.configure(httpSettings.get<string>('proxy'), httpSettings.get<boolean>('proxyStrictSSL'));
 }

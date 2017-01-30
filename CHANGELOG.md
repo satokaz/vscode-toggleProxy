@@ -1,5 +1,8 @@
 ﻿# Changelog
 
+* 0.4.4 - 2017/1/30
+  * Fixed being notified every time the `settings.json` file is rewritten
+
 * 0.4.3 - 2017/1/30
   * Add http_proxy toggle notification. 
   * Make a copy of settings.json in `extensionPath`. (ExtensionPath is an example: `$HOME/.vscode/extensions/satokaz.vscode-toggleproxy-$VERSION/`)
