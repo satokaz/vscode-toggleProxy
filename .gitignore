@@ -39,3 +39,8 @@ jspm_packages
 out
 .vsix
 vsc-extension-quickstart.md
+typings
+typings.json
+jsconfig.json
+settings.json.tmp
+extension.ts.bakcup

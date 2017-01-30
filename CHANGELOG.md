@@ -1,5 +1,9 @@
 ﻿# Changelog
 
+* 0.4.3 - 2017/1/30
+  * Add http_proxy toggle notification. 
+  * Make a copy of settings.json in `extensionPath`. (ExtensionPath is an example: `$HOME/.vscode/extensions/satokaz.vscode-toggleproxy-$VERSION/`)
+  
 * 0.4.2 - 2016/12/26
   * Change file reading to synchronous read/write
   * Change ping to 10 to 15 second interval

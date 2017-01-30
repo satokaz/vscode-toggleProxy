@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
+import * as httpRequest from 'request-light';
+import toggleNotifier from './toggleNotifier';
 
 var statusBarItem;
 var disposableCommand;
@@ -19,10 +21,13 @@ interface IHTTP_ProxyConf {
 // controlled by the activation events defined in package.json
 export function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations, your extension "toggleProxy" is now active!');
+
     statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
+    statusBarItem.text = `$(globe)` + "undefined";
     statusBarItem.command = 'extension.toggleProxy';
     statusBarItem.color = '#FFFFFF';
 
+	vscode.workspace.onDidChangeConfiguration(e => configureHttpRequest());
     // Autocchange disable/enable requires restart
     if (vscode.workspace.getConfiguration('toggleproxy')['autochange'] === true) {
         pingProxy();
@@ -37,12 +42,21 @@ export function activate(context: vscode.ExtensionContext) {
 module.exports.activate = activate;
 
 function toggleProxy() {
+    
     let settingsTmpDir = (process.platform == 'win32' ? process.env.TMP : process.env.TMPDIR);
     let settingsTmpFile = path.join(settingsTmpDir, path.basename(settingsPath + '.tmp.' + Math.random()));
     // console.log(settingsTmpDir);
     // console.log(settingsTmpFile);
     let line: string;
     let array = fs.readFileSync(settingsPath, 'utf8').toString().split("\n");
+
+
+    // Backup to extensionPath
+    let backupTmpFile = path.join(vscode.extensions.getExtension("satokaz.vscode-toggleproxy").extensionPath, path.basename(settingsPath + '.tmp'));
+    if(fs.statSync(settingsPath).size !== 0){
+        fs.writeFileSync(backupTmpFile, array.join('\n'), 'utf8');
+    }
+
     for (line in array) {
         const matchResult = regExpMatchHttpProxy(array[line]);
 
@@ -61,11 +75,14 @@ function toggleProxy() {
     fs.writeFileSync(settingsTmpFile, array.join('\n'), 'utf8');
 
     // copy tmp settings file to vscode settings
-    // fs.createReadStream(settingsTmpFile).pipe(fs.createWriteStream(settingsPath));
     // console.log("fs.writeFileSync(settingsPath, fs.readFileSync(settingsTmpFile,\"utf-8\"), 'utf8');")
     fs.writeFileSync(settingsPath, fs.readFileSync(settingsTmpFile,"utf-8"), 'utf8');
     // console.log("fs.unlink(settingsTmpFile);");
     fs.unlink(settingsTmpFile);
+    
+    vscode.workspace.onDidChangeConfiguration(e => configureHttpRequest());
+
+    return void 0;
 }
 
 //
@@ -83,6 +100,12 @@ function statusBarUpdate() {
     if (httpProxy) {
         statusBarItem.text = `$(globe)` + httpProxy.http_proxyEnabledString;
         statusBarItem.tooltip = httpProxy.http_proxy;
+
+        // node-notifier
+        if (vscode.workspace.getConfiguration('toggleproxy')['notifier'] === true) {
+        toggleNotifier(httpProxy);
+        // console.log('httpProxy.http_proxyEnabled =', httpProxy.http_proxyEnabled);
+        }
     }
 };
 
@@ -196,3 +219,9 @@ function pingProxy() {
     // console.log('http.proxy =', vscode.workspace.getConfiguration().get('http.proxy'));
     setTimeout(pingProxy, 15000);
 };
+
+function configureHttpRequest() {
+	let httpSettings = vscode.workspace.getConfiguration('http');
+    // console.log("Enter configureHttpRequest.");
+	httpRequest.configure(httpSettings.get<string>('proxy'), httpSettings.get<boolean>('proxyStrictSSL'));
+}
