@@ -1,5 +1,8 @@
 ﻿# Changelog
 
+* 0.4.5 - 2017/3/6
+  * Added new setting `toggleproxy.pingInterval` (default: 30000) to enable ping interval specification 
+  
 * 0.4.4 - 2017/1/30
   * Fixed being notified every time the `settings.json` file is rewritten
 

@@ -1,5 +1,8 @@
 # vscode-toggleproxy
 
+[![Version](http://vsmarketplacebadge.apphb.com/version/satokaz.vscode-toggleproxy.svg)](https://marketplace.visualstudio.com/items?itemName=satokaz.vscode-toggleproxy)
+[![Installs](http://vsmarketplacebadge.apphb.com/installs/satokaz.vscode-toggleproxy.svg)](https://marketplace.visualstudio.com/items?itemName=satokaz.vscode-toggleproxy)
+
 ## Functions provided
 
 This extension toggles `enable` or `disable` the `http_proxy` item in `settings.json`.
@@ -71,6 +74,9 @@ Please make a backup of settings.json.
 > ExtensionPath is an example: `$HOME/.vscode/extensions/satokaz.vscode-toggleproxy-$VERSION/settings.json.tmp`
 
 # Changelog
+
+* 0.4.5 - 2017/3/6
+  * Added new setting `toggleproxy.pingInterval` (default: 30000 ms (30 s)) to enable ping interval specification 
 
 * 0.4.4 - 2017/1/30
   * Fixed being notified every time the `settings.json` file is rewritten
