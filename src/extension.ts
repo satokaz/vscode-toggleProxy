@@ -3,8 +3,9 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
 import * as httpRequest from 'request-light';
+import * as ping from 'ping';
 
-const notifier = require('node-notifier'); 
+const notifier = require('node-notifier');
 
 var statusBarItem;
 var disposableCommand;
@@ -43,7 +44,7 @@ export function activate(context: vscode.ExtensionContext) {
 module.exports.activate = activate;
 
 function toggleProxy() {
-    
+
     const httpProxy: IHTTP_ProxyConf = getHttpProxy();
 
     let settingsTmpDir = (process.platform == 'win32' ? process.env.TMP : process.env.TMPDIR);
@@ -87,7 +88,7 @@ function toggleProxy() {
             notifier.notify({
             'title': 'Visual Studio Code - Proxy Notification',
             'message': !httpProxy.http_proxyEnabled ? 'Proxy Enabled: ' + httpProxy.http_proxy : 'Proxy Disabled',
-            'message2': 'test',
+            'appName': 'Visual Studio Code',
             'icon': path.join(vscode.extensions.getExtension("satokaz.vscode-toggleproxy").extensionPath, path.join('images', 'octicon-globe_128_0_7c05c9_none.png')) ,
             timeout: 5
         });
@@ -106,7 +107,7 @@ function settingsFileChanged(event: string, fileName: string) {
 }
 
 //
-// Refresh StatusBarItem 
+// Refresh StatusBarItem
 //
 function statusBarUpdate() {
     const httpProxy: IHTTP_ProxyConf = getHttpProxy();
@@ -137,7 +138,7 @@ function getHttpProxy(): IHTTP_ProxyConf {
 
 //
 // apply regExp to found the http_proxy config in settings file
-// 
+//
 // matchResult[1]: // or nothing => comment
 // matchResult[2]: https or http
 // matchResult[3]: contains the proxy adress
@@ -174,7 +175,7 @@ function regExpMatchHttpProxy(line: string): IHTTP_ProxyConf {
 }
 
 //
-// get the PATH of settings.json (check Stable or Insiders build?) 
+// get the PATH of settings.json (check Stable or Insiders build?)
 //
 function getSettingsPath() {
     let settingsFile;
@@ -201,20 +202,23 @@ function getSettingsPath() {
 }
 
 //
-// ping proxy 
+// ping proxy
 //
 function pingProxy() {
-    var ping = require('ping');
+    const config = vscode.workspace.getConfiguration('toggleproxy');
+    let values = (config.get('pingInterval') === undefined) ? Number(30000) : +config.get('pingInterval');
+    // console.log('values =', values);
+
     const httpProxy: IHTTP_ProxyConf = getHttpProxy();
     ping.sys.probe(httpProxy.http_proxyhost, function(isAlive) {
-        if (isAlive) {  
+        if (isAlive) {
             // proxy is alive
             // console.log(httpProxy.http_proxyhost  + ' is alive.');
             if (httpProxy.http_proxyEnabled === false) {
                 // Enable when http.proxy is disabled
                 toggleProxy();
             }
-        } else { 
+        } else {
             // proxy is dead
             // console.log(httpProxy.http_proxyhost + ' is dead.');
             if (httpProxy.http_proxyEnabled === true) {
@@ -224,7 +228,7 @@ function pingProxy() {
         }
     });
     // console.log('http.proxy =', vscode.workspace.getConfiguration().get('http.proxy'));
-    setTimeout(pingProxy, 15000);
+    setTimeout(pingProxy, values);
 };
 
 function configureHttpRequest() {
