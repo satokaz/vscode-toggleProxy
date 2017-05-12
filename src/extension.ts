@@ -19,6 +19,11 @@ interface IHTTP_ProxyConf {
     http_proxyhost: string
 }
 
+const config = vscode.workspace.getConfiguration('toggleproxy');
+console.log(config.inspect<string>('autochange'));
+console.log(config.inspect<string>('notifier'));
+console.log(vscode.workspace.getConfiguration('http').inspect<string>('proxy'));
+
 // this method is called when your extension is activated. activation is
 // controlled by the activation events defined in package.json
 export function activate(context: vscode.ExtensionContext) {

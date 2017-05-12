@@ -5,7 +5,7 @@
   "version": "0.4.5",
   "publisher": "satokaz",
   "engines": {
-    "vscode": "^1.5.0"
+    "vscode": "^1.10.0"
   },
   "categories": [
     "Other"
@@ -84,7 +84,7 @@
     "@types/lodash": "^4.14.39",
     "@types/node": "^6.0.40",
     "typescript": "^2.0.3",
-    "vscode": "^1.0.3",
+    "vscode": "^1.1.0",
     "@types/mocha": "^2.2.32"
   },
   "dependencies": {
