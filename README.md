@@ -1,8 +1,5 @@
 # vscode-toggleproxy
 
-[![Version](http://vsmarketplacebadge.apphb.com/version/satokaz.vscode-toggleproxy.svg)](https://marketplace.visualstudio.com/items?itemName=satokaz.vscode-toggleproxy)
-[![Installs](http://vsmarketplacebadge.apphb.com/installs/satokaz.vscode-toggleproxy.svg)](https://marketplace.visualstudio.com/items?itemName=satokaz.vscode-toggleproxy)
-
 ## Functions provided
 
 This extension toggles `enable` or `disable` the `http_proxy` item in `settings.json`.
