@@ -30,6 +30,8 @@ const config = vscode.workspace.getConfiguration('toggleproxy');
 export function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations, your extension "toggleProxy" is now active!');
 
+    console.log(os.tmpdir());
+
     statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
     statusBarItem.text = `$(globe)` + "undefined";
     statusBarItem.command = 'extension.toggleProxy';
@@ -61,7 +63,7 @@ async function toggleProxy() {
     const httpProxy: IHTTP_ProxyConf = getHttpProxy();
 
     // let settingsTmpDir = (process.platform == 'win32' ? process.env.TMP : process.env.TMPDIR);
-    let settingsTmpDir = (process.platform == 'win32' ? process.env.TMP : ((process.platform == 'darwin' ) ? process.env.TMPDIR : os.tmpdir()));
+    let settingsTmpDir = os.tmpdir();
     let settingsTmpFile = path.join(settingsTmpDir, path.basename(settingsPath + '.tmp.' + Math.random()));
 
     // debug
