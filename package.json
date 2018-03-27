@@ -5,7 +5,7 @@
   "version": "0.4.5",
   "publisher": "satokaz",
   "engines": {
-    "vscode": "^1.10.0"
+    "vscode": "^1.16.0"
   },
   "categories": [
     "Other"
@@ -90,6 +90,6 @@
   "dependencies": {
     "node-notifier": "^5.1.2",
     "ping": "^0.2.2",
-    "request-light": "^0.2.0"
+    "request-light": "^0.2.1"
   }
 }
